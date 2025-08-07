@@ -181,7 +181,7 @@ During setup I hit several roadblocks—here’s what went wrong and how I fixed
 - **Root Cause:** Cloudflare’s "Orange Cloud" proxy was caching or blocking direct IP resolution.
 - **Fix:** Switched the A record to **DNS only** (gray cloud), ensuring direct lookups to my EC2 IP.
 
-**🧠 Key Takeaways:
+**🧠 Key Takeaways:**
 - Ensure only one active server block per domain; I had to **delete the default `/etc/nginx/nginx.conf` server block** to avoid conflicts.
 - Always match `server_name` exactly to your domain.
 - Verify syntax with `nginx -t` before reloading.
