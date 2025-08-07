@@ -1,12 +1,13 @@
 ## ⚡ Launching an NGINX Web Server on Amazon EC2 + Custom Domain (Cloudflare) 🌐
 ---
-[yassinnginx.uk](http://yassinnginx.uk)  
-
-<img width="895" height="622" alt="image" src="https://github.com/user-attachments/assets/e826cc8e-dbd4-4cc3-8aab-162f3ac339ed" />
-
 
 I built my own web server on AWS EC2 and mapped it to a custom domain via Cloudflare.  
 In this guide, I’ll walk you through the exact steps I took — including the struggles, configs, and final success.
+
+---
+## Live-Demo
+Visit [yassinnginx.uk](http://yassinnginx.uk)  
+<img width="739" height="413" alt="image" src="https://github.com/user-attachments/assets/f58e6fb1-9240-4ee0-b017-3348145d7a00" />
 
 ---
 
