@@ -5,14 +5,14 @@ In this guide, I’ll walk you through the exact steps I took — including the 
 
 ---
 
-## 🔹 Step 1: Purchase a Domain via Cloudflare
+## Step 1: Purchase a Domain via Cloudflare
 
 Go to https://dash.cloudflare.com and buy a domain.  
 It should cost around **$5–$10/year** depending on the extension (`.uk`, `.dev`, `.me`, etc).
 
 ---
 
-## 🔹 Step 2: Launch an EC2 Instance on AWS
+## Step 2: Launch an EC2 Instance on AWS
 
 - AMI: **Amazon Linux 2023**
 - Instance Type: **t3.micro (Free tier eligible)**
@@ -23,14 +23,14 @@ It should cost around **$5–$10/year** depending on the extension (`.uk`, `.dev
 
 ---
 
-## 🔹 Step 3: Get the Public IPv4 Address
+## Step 3: Get the Public IPv4 Address
 
 After launching, go to the EC2 dashboard → Instances  
 Find your instance and note the **Public IPv4 address** (e.g. `16.171.242.226`).
 
 ---
 
-## 🔹 Step 4: SSH Into the EC2 Instance
+## Step 4: SSH Into the EC2 Instance
 
 ```bash
 ssh -i /path/to/your-key.pem ec2-user@16.171.242.226
@@ -38,7 +38,7 @@ ssh -i /path/to/your-key.pem ec2-user@16.171.242.226
 
 ---
 
-## 🔹 Step 5: Install & Start NGINX
+## Step 5: Install & Start NGINX
 
 ```bash
 sudo yum update -y
@@ -49,7 +49,7 @@ sudo systemctl enable nginx
 
 ---
 
-## 🔹 Step 6: Point Domain to EC2 via A Record
+## Step 6: Point Domain to EC2 via A Record
 
 In Cloudflare DNS settings:
 - **Type**: A  
@@ -59,7 +59,7 @@ In Cloudflare DNS settings:
 
 ---
 
-## 🔹 Step 7: Confirm DNS Propagation
+## Step 7: Confirm DNS Propagation
 
 ```bash
 nslookup yassinnginx.uk
@@ -75,7 +75,7 @@ Address: 16.171.242.226
 
 ---
 
-## 🔹 Step 8: Configure NGINX for yassinnginx.uk
+## Step 8: Configure NGINX for yassinnginx.uk
 
 ```bash
 sudo vi /etc/nginx/conf.d/yassinnginx.uk.conf
@@ -106,7 +106,7 @@ sudo systemctl reload nginx
 
 ---
 
-## 🔹 Step 9: Customize the NGINX Default Page
+## Step 9: Customize the NGINX Default Page
 
 ```bash
 sudo vi /usr/share/nginx/html/index.html
@@ -147,7 +147,7 @@ sudo systemctl reload nginx
 
 ---
 
-## 🔹 Step 10: Final Test
+## Step 10: Final Test
 
 Visit: [yassinnginx.uk](http://yassinnginx.uk)  
 You should see your personal NGINX landing page.
@@ -172,12 +172,12 @@ During setup I hit several roadblocks—here’s what went wrong and how I fixed
 
 **✅ Validation:** `curl -I http://yassinnginx.uk` returned `HTTP/1.1 200 OK` with my custom page headers.
 
-**⚠️ DNS Tip: Cloudflare Proxy vs. DNS Only**  
+**⚠DNS Tip: Cloudflare Proxy vs. DNS Only**  
 - **Symptom:** Domain still pointed to an old A record or showed error 521.  
 - **Root Cause:** Cloudflare’s “Orange Cloud” proxy was caching or blocking direct IP resolution.  
 - **Fix:** Switched the A record to **DNS Only** (gray cloud), ensuring direct lookups to my EC2 IP.
 
-**🧠 Key Takeaways:**
+**Key Takeaways:**
 - Ensure only one active server block per domain; I had to **delete the default `/etc/nginx/nginx.conf` server block** to avoid conflicts.
 - Always match `server_name` exactly to `yassinnginx.uk`.
 - Verify syntax with `nginx -t` before reloading.
@@ -186,7 +186,7 @@ During setup I hit several roadblocks—here’s what went wrong and how I fixed
 
 ---
 
-## ✅ Recap
+## Recap
 
 - [x] Bought domain
 - [x] Launched EC2
@@ -198,7 +198,7 @@ During setup I hit several roadblocks—here’s what went wrong and how I fixed
 
 ---
 
-## 🎉 End Result
+## End Result
 
 You now have a working NGINX server running on EC2, mapped to a real domain (`yassinnginx.uk`).  
 Perfect to use as your portfolio, a landing page, or further deploy CI/CD apps on top.
