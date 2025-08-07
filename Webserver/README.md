@@ -14,6 +14,7 @@ It should cost around **$5–$10/year** depending on the extension (`.uk`, `.dev
 
 ## Step 2: Launch an EC2 Instance on AWS
 
+
 - AMI: **Amazon Linux 2023**
 - Instance Type: **t3.micro (Free tier eligible)**
 - Security Group Inbound Rules:
@@ -150,7 +151,9 @@ sudo systemctl reload nginx
 ## Step 10: Final Test
 
 Visit: [yassinnginx.uk](http://yassinnginx.uk)  
-You should see your personal NGINX landing page.
+
+<img width="895" height="622" alt="image" src="https://github.com/user-attachments/assets/e826cc8e-dbd4-4cc3-8aab-162f3ac339ed" />
+
 
 ---
 
