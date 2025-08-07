@@ -161,21 +161,21 @@ Visit: [yassinnginx.uk](http://yassinnginx.uk)
 
 During setup I hit several roadblocks—here’s what went wrong and how I fixed each one:
 
-**❌ Issue: Still seeing default NGINX landing page**  
+**Issue: Still seeing default NGINX landing page**  
 - **Symptom:** Browsing [yassinnginx.uk](http://yassinnginx.uk) showed the generic “Welcome to nginx!” page.  
 - **Root Cause:** No server block was defined for my domain, so NGINX served its default site.  
 - **Fix:** Created `/etc/nginx/conf.d/yassinnginx.uk.conf` with a `server_name yassinnginx.uk www.yassinnginx.uk;` directive, pointing `root` to `/usr/share/nginx/html`.
 
-**✅ Validation:** Ran `sudo nginx -t` → configuration OK.
+**Validation:** Ran `sudo nginx -t` → configuration OK.
 
-**❌ Issue: Configuration not applied**  
+**Issue: Configuration not applied**  
 - **Symptom:** Updates to the server block didn’t appear in the browser.  
 - **Root Cause:** NGINX wasn’t reloading its config after edits.  
 - **Fix:** Executed `sudo systemctl reload nginx` (instead of restart) to apply changes without downtime.
 
-**✅ Validation:** `curl -I http://yassinnginx.uk` returned `HTTP/1.1 200 OK` with my custom page headers.
+**Validation:** `curl -I http://yassinnginx.uk` returned `HTTP/1.1 200 OK` with my custom page headers.
 
-**⚠DNS Tip: Cloudflare Proxy vs. DNS Only**  
+**DNS Tip: Cloudflare Proxy vs. DNS Only**  
 - **Symptom:** Domain still pointed to an old A record or showed error 521.  
 - **Root Cause:** Cloudflare’s “Orange Cloud” proxy was caching or blocking direct IP resolution.  
 - **Fix:** Switched the A record to **DNS Only** (gray cloud), ensuring direct lookups to my EC2 IP.
