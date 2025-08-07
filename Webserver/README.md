@@ -26,14 +26,14 @@ It should cost around **$5–$10/year** depending on the extension (`.uk`, `.dev
 ## 🔹 Step 3: Get the Public IPv4 Address
 
 After launching, go to the EC2 dashboard → Instances  
-Find your instance and note the **Public IPv4 address**.
+Find your instance and note the **Public IPv4 address** (e.g. `16.171.242.226`).
 
 ---
 
 ## 🔹 Step 4: SSH Into the EC2 Instance
 
 ```bash
-ssh -i /path/to/your-key.pem ec2-user@<EC2_PUBLIC_IP>
+ssh -i /path/to/your-key.pem ec2-user@16.171.242.226
 ```
 
 ---
@@ -54,8 +54,8 @@ sudo systemctl enable nginx
 In Cloudflare DNS settings:
 - **Type**: A  
 - **Name**: `@` or `www`  
-- **IPv4 address**: `<your-ec2-public-ip>`  
-- **Proxy status**: DNS Only (disable orange cloud)
+- **IPv4 address**: `16.171.242.226`  
+- **Proxy status**: DNS Only (gray cloud)
 
 ---
 
@@ -69,13 +69,13 @@ Expected output:
 
 ```
 Non-authoritative answer:
-Name:   yourdomain.com
-Address: <EC2_PUBLIC_IP>
+Name:   yassinnginx.uk
+Address: 16.171.242.226
 ```
 
 ---
 
-## 🔹 Step 8: Configure NGINX for Your Domain
+## 🔹 Step 8: Configure NGINX for yassinnginx.uk
 
 ```bash
 sudo vi /etc/nginx/conf.d/yassinnginx.uk.conf
@@ -86,7 +86,7 @@ Paste:
 ```nginx
 server {
     listen 80;
-    server_name http://yassinnginx.uk
+    server_name yassinnginx.uk www.yassinnginx.uk;
 
     root /usr/share/nginx/html;
     index index.html;
@@ -149,43 +149,39 @@ sudo systemctl reload nginx
 
 ## 🔹 Step 10: Final Test
 
-Visit:
-
-```
-http://yassinnginx.uk
-```
-
+Visit: [yassinnginx.uk](http://yassinnginx.uk)  
 You should see your personal NGINX landing page.
 
 ---
 
 ## 🧠 Troubleshooting + Lessons Learned
+
 During setup I hit several roadblocks—here’s what went wrong and how I fixed each one:
 
-**❌ Issue: Still seeing default NGINX landing page**
-- **Symptom:** Browsing `http://yassinnginx.uk` showed the generic "Welcome to nginx!" page.
-- **Root Cause:** No server block was defined for my domain, so NGINX served its default site.
+**❌ Issue: Still seeing default NGINX landing page**  
+- **Symptom:** Browsing [yassinnginx.uk](http://yassinnginx.uk) showed the generic “Welcome to nginx!” page.  
+- **Root Cause:** No server block was defined for my domain, so NGINX served its default site.  
 - **Fix:** Created `/etc/nginx/conf.d/yassinnginx.uk.conf` with a `server_name yassinnginx.uk www.yassinnginx.uk;` directive, pointing `root` to `/usr/share/nginx/html`.
 
 **✅ Validation:** Ran `sudo nginx -t` → configuration OK.
 
-**❌ Issue: Configuration not applied**
-- **Symptom:** Updates to the server block didn’t appear in the browser.
-- **Root Cause:** NGINX wasn’t reloading its config after edits.
+**❌ Issue: Configuration not applied**  
+- **Symptom:** Updates to the server block didn’t appear in the browser.  
+- **Root Cause:** NGINX wasn’t reloading its config after edits.  
 - **Fix:** Executed `sudo systemctl reload nginx` (instead of restart) to apply changes without downtime.
 
 **✅ Validation:** `curl -I http://yassinnginx.uk` returned `HTTP/1.1 200 OK` with my custom page headers.
 
-**⚠️ DNS Tip: Cloudflare Proxy vs. DNS Only**
-- **Symptom:** Domain still pointed to an old A record or showed error 521.
-- **Root Cause:** Cloudflare’s "Orange Cloud" proxy was caching or blocking direct IP resolution.
-- **Fix:** Switched the A record to **DNS only** (gray cloud), ensuring direct lookups to my EC2 IP.
+**⚠️ DNS Tip: Cloudflare Proxy vs. DNS Only**  
+- **Symptom:** Domain still pointed to an old A record or showed error 521.  
+- **Root Cause:** Cloudflare’s “Orange Cloud” proxy was caching or blocking direct IP resolution.  
+- **Fix:** Switched the A record to **DNS Only** (gray cloud), ensuring direct lookups to my EC2 IP.
 
 **🧠 Key Takeaways:**
 - Ensure only one active server block per domain; I had to **delete the default `/etc/nginx/nginx.conf` server block** to avoid conflicts.
-- Always match `server_name` exactly to your domain.
+- Always match `server_name` exactly to `yassinnginx.uk`.
 - Verify syntax with `nginx -t` before reloading.
-- Use `systemctl reload` to apply config edits.
+- Use `systemctl reload nginx` to apply config edits.
 - For initial testing, disable Cloudflare proxy so DNS resolves directly.
 
 ---
@@ -204,5 +200,5 @@ During setup I hit several roadblocks—here’s what went wrong and how I fixed
 
 ## 🎉 End Result
 
-You now have a working NGINX server running on EC2, mapped to a real domain.  
+You now have a working NGINX server running on EC2, mapped to a real domain (`yassinnginx.uk`).  
 Perfect to use as your portfolio, a landing page, or further deploy CI/CD apps on top.
