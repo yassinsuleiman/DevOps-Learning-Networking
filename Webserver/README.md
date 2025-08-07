@@ -62,7 +62,7 @@ In Cloudflare DNS settings:
 ## 🔹 Step 7: Confirm DNS Propagation
 
 ```bash
-nslookup yourdomain.com
+nslookup yassinnginx.uk
 ```
 
 Expected output:
@@ -78,7 +78,7 @@ Address: <EC2_PUBLIC_IP>
 ## 🔹 Step 8: Configure NGINX for Your Domain
 
 ```bash
-sudo vi /etc/nginx/conf.d/yourdomain.com.conf
+sudo vi /etc/nginx/conf.d/yassinnginx.uk.conf
 ```
 
 Paste:
@@ -86,7 +86,7 @@ Paste:
 ```nginx
 server {
     listen 80;
-    server_name yourdomain.com www.yourdomain.com;
+    server_name http://yassinnginx.uk
 
     root /usr/share/nginx/html;
     index index.html;
@@ -152,7 +152,7 @@ sudo systemctl reload nginx
 Visit:
 
 ```
-http://yourdomain.com
+http://yassinnginx.uk
 ```
 
 You should see your personal NGINX landing page.
