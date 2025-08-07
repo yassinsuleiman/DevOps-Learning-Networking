@@ -55,6 +55,6 @@ Over the past week, I  revised my Networking knowledge and dove deep into the fu
 
 ## 🚀 What’s Next?
 
-I’m excited to apply these networking fundamentals to more complex cloud architectures and begin automating deployments using Infrastructure as Code (Terraform, CloudFormation).  
+I’m excited to apply these networking fundamentals to more complex cloud architectures and begin automating deployments using advanced DevOps tools.  
 
 > _“Networking is the backbone of every cloud architecture—master it, and the sky is the limit!”_  
