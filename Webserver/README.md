@@ -160,12 +160,33 @@ You should see your personal NGINX landing page.
 ---
 
 ## 🧠 Troubleshooting + Lessons Learned
+During setup I hit several roadblocks—here’s what went wrong and how I fixed each one:
 
-- ❌ I kept seeing the default NGINX page → forgot to create a server block!
-- ✅ Created a proper conf file in `/etc/nginx/conf.d/`
-- ✅ Verified config with `nginx -t`
-- ✅ Reloaded with `systemctl reload nginx`
-- ⚠️ Make sure Cloudflare A record is set to DNS only (not proxied)
+**❌ Issue: Still seeing default NGINX landing page**
+- **Symptom:** Browsing `http://yassinnginx.uk` showed the generic "Welcome to nginx!" page.
+- **Root Cause:** No server block was defined for my domain, so NGINX served its default site.
+- **Fix:** Created `/etc/nginx/conf.d/yassinnginx.uk.conf` with a `server_name yassinnginx.uk www.yassinnginx.uk;` directive, pointing `root` to `/usr/share/nginx/html`.
+
+**✅ Validation:** Ran `sudo nginx -t` → configuration OK.
+
+**❌ Issue: Configuration not applied**
+- **Symptom:** Updates to the server block didn’t appear in the browser.
+- **Root Cause:** NGINX wasn’t reloading its config after edits.
+- **Fix:** Executed `sudo systemctl reload nginx` (instead of restart) to apply changes without downtime.
+
+**✅ Validation:** `curl -I http://yassinnginx.uk` returned `HTTP/1.1 200 OK` with my custom page headers.
+
+**⚠️ DNS Tip: Cloudflare Proxy vs. DNS Only**
+- **Symptom:** Domain still pointed to an old A record or showed error 521.
+- **Root Cause:** Cloudflare’s "Orange Cloud" proxy was caching or blocking direct IP resolution.
+- **Fix:** Switched the A record to **DNS only** (gray cloud), ensuring direct lookups to my EC2 IP.
+
+**🧠 Key Takeaways:
+- Ensure only one active server block per domain; I had to **delete the default `/etc/nginx/nginx.conf` server block** to avoid conflicts.
+- Always match `server_name` exactly to your domain.
+- Verify syntax with `nginx -t` before reloading.
+- Use `systemctl reload` to apply config edits.
+- For initial testing, disable Cloudflare proxy so DNS resolves directly.
 
 ---
 
