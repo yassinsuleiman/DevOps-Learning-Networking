@@ -1,0 +1,187 @@
+## ⚡ Launching an NGINX Web Server on Amazon EC2 + Custom Domain (Cloudflare) 🌐
+
+I built my own web server on AWS EC2 and mapped it to a custom domain via Cloudflare.  
+In this guide, I’ll walk you through the exact steps I took — including the struggles, configs, and final success.
+
+---
+
+## 🔹 Step 1: Purchase a Domain via Cloudflare
+
+Go to https://dash.cloudflare.com and buy a domain.  
+It should cost around **$5–$10/year** depending on the extension (`.uk`, `.dev`, `.me`, etc).
+
+---
+
+## 🔹 Step 2: Launch an EC2 Instance on AWS
+
+- AMI: **Amazon Linux 2023**
+- Instance Type: **t3.micro (Free tier eligible)**
+- Security Group Inbound Rules:
+  - **SSH (22)** → Your IP only
+  - **HTTP (80)** → 0.0.0.0/0
+  - **HTTPS (443)** → 0.0.0.0/0
+
+---
+
+## 🔹 Step 3: Get the Public IPv4 Address
+
+After launching, go to the EC2 dashboard → Instances  
+Find your instance and note the **Public IPv4 address**.
+
+---
+
+## 🔹 Step 4: SSH Into the EC2 Instance
+
+```bash
+ssh -i /path/to/your-key.pem ec2-user@<EC2_PUBLIC_IP>
+```
+
+---
+
+## 🔹 Step 5: Install & Start NGINX
+
+```bash
+sudo yum update -y
+sudo yum install -y nginx
+sudo systemctl start nginx
+sudo systemctl enable nginx
+```
+
+---
+
+## 🔹 Step 6: Point Domain to EC2 via A Record
+
+In Cloudflare DNS settings:
+- **Type**: A  
+- **Name**: `@` or `www`  
+- **IPv4 address**: `<your-ec2-public-ip>`  
+- **Proxy status**: DNS Only (disable orange cloud)
+
+---
+
+## 🔹 Step 7: Confirm DNS Propagation
+
+```bash
+nslookup yourdomain.com
+```
+
+Expected output:
+
+```
+Non-authoritative answer:
+Name:   yourdomain.com
+Address: <EC2_PUBLIC_IP>
+```
+
+---
+
+## 🔹 Step 8: Configure NGINX for Your Domain
+
+```bash
+sudo vi /etc/nginx/conf.d/yourdomain.com.conf
+```
+
+Paste:
+
+```nginx
+server {
+    listen 80;
+    server_name yourdomain.com www.yourdomain.com;
+
+    root /usr/share/nginx/html;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}
+```
+
+Then:
+
+```bash
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+---
+
+## 🔹 Step 9: Customize the NGINX Default Page
+
+```bash
+sudo vi /usr/share/nginx/html/index.html
+```
+
+Paste:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Yassin Suleiman | DevOps Engineer</title>
+  <style>
+    body { background:#0f172a; color:#f1f5f9; font-family:Arial; text-align:center; padding-top:20vh; }
+    h1 { font-size:3rem; margin-bottom:1rem; }
+    h2 { font-size:1.5rem; color:#38bdf8; margin-bottom:2rem; }
+    a { color:#facc15; text-decoration:none; margin:0 1rem; font-size:1.2rem; }
+  </style>
+</head>
+<body>
+  <h1>Yassin Suleiman</h1>
+  <h2>DevOps Engineer | Cloud | Linux | CI/CD</h2>
+  <div>
+    <a href="https://github.com/yassinsuleiman">GitHub</a>
+    <a href="mailto:yassine.suleiman@proton.me">Email</a>
+    <a href="https://linkedin.com/in/ysuleiman">LinkedIn</a>
+  </div>
+</body>
+</html>
+```
+
+Then:
+
+```bash
+sudo systemctl reload nginx
+```
+
+---
+
+## 🔹 Step 10: Final Test
+
+Visit:
+
+```
+http://yourdomain.com
+```
+
+You should see your personal NGINX landing page.
+
+---
+
+## 🧠 Troubleshooting + Lessons Learned
+
+- ❌ I kept seeing the default NGINX page → forgot to create a server block!
+- ✅ Created a proper conf file in `/etc/nginx/conf.d/`
+- ✅ Verified config with `nginx -t`
+- ✅ Reloaded with `systemctl reload nginx`
+- ⚠️ Make sure Cloudflare A record is set to DNS only (not proxied)
+
+---
+
+## ✅ Recap
+
+- [x] Bought domain
+- [x] Launched EC2
+- [x] Installed NGINX
+- [x] Created A record in Cloudflare
+- [x] Built NGINX server block
+- [x] Customized page
+- [x] DNS propagation confirmed
+
+---
+
+## 🎉 End Result
+
+You now have a working NGINX server running on EC2, mapped to a real domain.  
+Perfect to use as your portfolio, a landing page, or further deploy CI/CD apps on top.
